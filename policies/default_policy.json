@@ -1,0 +1,8 @@
+{
+  "must_cite_sources": true,
+  "min_sources": 3,
+  "max_urls_per_domain": 5,
+  "require_peer_reviewed": false,
+  "max_report_length": 10000,
+  "forbidden_domains": []
+}
