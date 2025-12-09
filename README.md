@@ -2,7 +2,7 @@
 
 A comprehensive AI agent system that demonstrates tool-calling, secure execution, and safety governance. This project teaches you how to build autonomous, safe, and reliable AI agents.
 
-## 🎯 Learning Objectives
+## Objectives
 
 This project teaches you:
 
