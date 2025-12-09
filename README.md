@@ -77,7 +77,7 @@ ResearchAgent/
 ### 1. Installation
 
 ```bash
-cd ResearchAgent
+cd SearchAgent
 pip install -r requirements.txt
 ```
 
