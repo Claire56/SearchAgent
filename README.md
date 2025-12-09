@@ -211,23 +211,23 @@ Main agent that orchestrates the research process:
 **Policy Checker**: Validates against policies
 **Rollback Manager**: Handles state rollbacks
 
-## 🎓 Learning Path
+## Need to Learn while Building: Follow Below Steps
 
-### Week 1: Tool-Calling Agents
+### 1: Tool-Calling Agents
 1. Understand ReAct pattern
 2. Implement basic agent loop
 3. Add web search tool
 4. Add URL reading tool
 5. Add report writing tool
 
-### Week 2: Secure Execution & Guardrails
+### 2: Secure Execution & Guardrails
 1. Implement pre-execution hooks
 2. Add domain whitelisting
 3. Implement input validation
 4. Add post-execution hooks
 5. Implement PII redaction
 
-### Week 3: Safety, Reliability, Governance
+### 3: Safety, Reliability, Governance
 1. Add human-in-the-loop approvals
 2. Implement state management
 3. Add rollback capabilities
