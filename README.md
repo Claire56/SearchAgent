@@ -353,4 +353,4 @@ All operations are logged:
 
 ---
 
-**Built for learning AI agents, tool-calling, security, and governance in a real-world research context.**
+
