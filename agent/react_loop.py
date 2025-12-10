@@ -1,9 +1,9 @@
 """ReAct (Reasoning + Acting) loop implementation."""
 
 from typing import Dict, Any, List, Optional, Callable, Tuple
-from openai import OpenAI
 from tools.base_tool import BaseTool, ToolResult
 from agent.state_manager import AgentState
+from utils.llm_client import BaseLLMClient
 from utils.config import config
 from utils.logger import logger
 
@@ -13,14 +13,13 @@ class ReActLoop:
     
     def __init__(
         self,
-        client: OpenAI,
+        client: BaseLLMClient,
         tools: List[BaseTool],
         max_iterations: Optional[int] = None
     ):
         self.client = client
         self.tools = {tool.name: tool for tool in tools}
         self.max_iterations = max_iterations or config.max_iterations
-        self.model = config.agent_model
     
     def get_tool_schemas(self) -> List[Dict[str, Any]]:
         """Get OpenAI function schemas for all tools."""
@@ -49,9 +48,8 @@ class ReActLoop:
         # Get tool schemas
         tool_schemas = self.get_tool_schemas()
         
-        # Call LLM with function calling
-        response = self.client.chat.completions.create(
-            model=self.model,
+        # Call LLM with function calling using abstract client
+        response = self.client.create_chat_completion(
             messages=messages,
             tools=tool_schemas if tool_schemas else None,
             tool_choice="auto",
@@ -175,7 +173,12 @@ class ReActLoop:
     
     def _get_system_prompt(self) -> str:
         """Get system prompt for the agent."""
-        return """You are a research agent that helps users gather information and create research reports.
+        from datetime import datetime
+        current_date = datetime.now().strftime("%B %d, %Y")
+        
+        return f"""You are a research agent that helps users gather information and create research reports.
+
+Current date: {current_date}
 
 Your goal is to:
 1. Understand the research query
@@ -183,6 +186,8 @@ Your goal is to:
 3. Read and extract content from relevant sources
 4. Synthesize the information
 5. Create a comprehensive research report
+
+IMPORTANT: When searching for information, always consider the current date above. For queries about "latest" or recent events, use appropriate years in your search (e.g., if today is 2025, search for 2026 for upcoming events, not past years).
 
 Available tools:
 - search_web: Search the web for information
