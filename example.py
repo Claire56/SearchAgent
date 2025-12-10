@@ -102,7 +102,7 @@ if __name__ == "__main__":
     print("\n🚀 Research Agent Examples\n")
     
     # Uncomment the example you want to run:
-    # example_basic_research()
+    example_basic_research()
     # example_with_approval()
     # example_rollback()
     
