@@ -1,9 +1,9 @@
 """ReAct (Reasoning + Acting) loop implementation."""
 
 from typing import Dict, Any, List, Optional, Callable, Tuple
-from openai import OpenAI
 from tools.base_tool import BaseTool, ToolResult
 from agent.state_manager import AgentState
+from utils.llm_client import BaseLLMClient
 from utils.config import config
 from utils.logger import logger
 
@@ -13,14 +13,13 @@ class ReActLoop:
     
     def __init__(
         self,
-        client: OpenAI,
+        client: BaseLLMClient,
         tools: List[BaseTool],
         max_iterations: Optional[int] = None
     ):
         self.client = client
         self.tools = {tool.name: tool for tool in tools}
         self.max_iterations = max_iterations or config.max_iterations
-        self.model = config.agent_model
     
     def get_tool_schemas(self) -> List[Dict[str, Any]]:
         """Get OpenAI function schemas for all tools."""
@@ -49,9 +48,8 @@ class ReActLoop:
         # Get tool schemas
         tool_schemas = self.get_tool_schemas()
         
-        # Call LLM with function calling
-        response = self.client.chat.completions.create(
-            model=self.model,
+        # Call LLM with function calling using abstract client
+        response = self.client.create_chat_completion(
             messages=messages,
             tools=tool_schemas if tool_schemas else None,
             tool_choice="auto",
@@ -175,14 +173,21 @@ class ReActLoop:
     
     def _get_system_prompt(self) -> str:
         """Get system prompt for the agent."""
-        return """You are a research agent that helps users gather information and create research reports.
+        from datetime import datetime
+        current_date = datetime.now().strftime("%B %d, %Y")
+        
+        return f"""You are a research agent that helps users gather information and create research reports.
+
+Current date: {current_date}
 
 Your goal is to:
 1. Understand the research query
 2. Search for relevant information using available tools
-3. Read and extract content from relevant sources
+3. Read and extract content from relevant sources (aim for 1-3 quality sources)
 4. Synthesize the information
-5. Create a comprehensive research report
+5. CREATE A RESEARCH REPORT - this is your PRIMARY objective
+
+IMPORTANT: When searching for information, always consider the current date above. For queries about "latest" or recent events, use appropriate years in your search (e.g., if today is 2025, search for 2026 for upcoming events, not past years).
 
 Available tools:
 - search_web: Search the web for information
@@ -193,7 +198,14 @@ Follow the ReAct pattern:
 1. Think about what you need to do next
 2. Use tools to gather information
 3. Observe the results
-4. Continue until you have enough information to write a report
+4. **WRITE THE REPORT as soon as you have sufficient information (even from 1-2 sources)**
+
+CRITICAL RULES:
+- DO NOT read the same URL multiple times
+- DO NOT search endlessly - 1-3 quality sources is enough
+- ALWAYS call write_report before you run out of iterations
+- If a URL is blocked or returns an error, try a different source instead
+- Your task is NOT complete until you call write_report
 
 Always cite your sources in the final report."""
     

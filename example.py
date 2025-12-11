@@ -23,7 +23,7 @@ def example_basic_research():
     agent = ResearchAgent(tools=tools)
     
     # Execute research
-    result = agent.research("What are the latest developments in AI safety?")
+    result = agent.research("Whats the latest on bobi wines presidential campaigns?")
     
     if result.get("success"):
         print("\n✅ Research completed!")
@@ -102,7 +102,7 @@ if __name__ == "__main__":
     print("\n🚀 Research Agent Examples\n")
     
     # Uncomment the example you want to run:
-    # example_basic_research()
+    example_basic_research()
     # example_with_approval()
     # example_rollback()
     
