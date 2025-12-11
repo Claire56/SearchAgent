@@ -1,7 +1,7 @@
 """PII (Personally Identifiable Information) redaction."""
 
 import re
-from typing import Dict, Any, List, Optional
+from typing import Dict, Any, List, Optional, Tuple
 from utils.config import config
 from utils.logger import logger
 
